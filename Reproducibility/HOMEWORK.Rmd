@@ -1,0 +1,10 @@
+---
+title: "HOMEWORK"
+author: "Jennifer Barnett"
+date: "Saturday, May 16, 2015"
+output: html_document
+---
+politics<-read.csv("politics.csv")
+# This connects the data with the name politics
+str(politics)
+# This explains the structure of the data (subject, party, testtime, optimismscore, minwage, sex, and income)
