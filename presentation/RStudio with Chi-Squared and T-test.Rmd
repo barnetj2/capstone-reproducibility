@@ -1,0 +1,75 @@
+---
+title: "RStudio with T-test"
+author: "Jennifer Barnett"
+date: "Monday, June 08, 2015"
+output: html_document
+---
+#Pull the Data
+Data <- read.csv("~/.PSY 441/data/Data.csv")
+View(Data)
+
+#Assign "critical"" to the critical words
+critical<-Data$Critical.Word..Y.N.
+#Assign "recall" to mean when critical words were recalled 
+recall<-critical=="Y"
+#Assign number of participants to "cond1"
+cond1<-Data$Condition[Data$Condition=="1"]
+cond2<-Data$Condition[Data$Condition=="2"]
+cond3<-Data$Condition[Data$Condition=="3"]
+cond4<-Data$Condition[Data$Condition=="4"]
+
+#perform a chi-square test
+chisq.test(Data$Condition,recall,simulate.p.value = TRUE)
+    
+    Pearson's Chi-squared test with simulated p-value (based on 2000 replicates)
+    data:  Data$Condition and recall
+    X-squared = 5.5873, df = NA, p-value = 0.2284
+
+#T-Test for negative congruent (negative word and red) and incongruent(negatie word and green)
+t.test(recall[Data$Condition=="1"],recall[Data$Condition=="3"],paired=FALSE, var.equal=FALSE,alternative="two.sided",conf.level=.95)
+
+      Welch Two Sample t-test
+
+      data:  recall[Data$Condition == "1"] and recall[Data$Condition == "3"]
+      t = 2, df = 8, p-value = 0.08052
+      alternative hypothesis: true difference in means is not equal to 0
+      95 percent confidence interval:
+       -0.05100069  0.71766736
+      sample estimates:
+      mean of x mean of y 
+      1.0000000 0.6666667 
+
+#T-Test for positive congruent (positive word and green) and incongruent (positive word and red)
+t.test(recall[Data$Condition=="2"],recall[Data$Condition=="4"],paired=FALSE, var.equal=FALSE,alternative="two.sided",conf.level=.95)
+
+      Welch Two Sample t-test
+      
+      data:  recall[Data$Condition == "2"] and recall[Data$Condition == "4"]
+      t = 1, df = 8, p-value = 0.3466
+      alternative hypothesis: true difference in means is not equal to 0
+      95 percent confidence interval:
+       -0.1451116  0.3673338
+      sample estimates:
+      mean of x mean of y 
+      1.0000000 0.8888889
+      
+#move the following programs into the working library
+library("dplyr")
+library("ggplot2")
+library("gplots")
+#Create a table for each condition and recall of critical word
+mytable<-table(critical,Data$Condition)
+mytable
+#
+write.table(mytable,"clipboard",sep="\t",col.names=NA)
+margin.table(mytable,1) #Row margins
+#  1 2 3 4 
+   6 8 9 9 
+margin.table(mytable,2) #Column margins
+# critical
+       N  Y 
+    0  4 28 
+
+#Bar Graph
+graph<-barplot(mytable, main="Frequency of the Recalled Critical Word", xlab="Condition", ylab="Number of People", col=c("darkblue","pink"), legend=rownames(mytable),beside=FALSE)
+
